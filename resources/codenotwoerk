@@ -1,0 +1,161 @@
+  public function store(Request $request)
+    {
+        $product = Product::where('code', $request->get('product'))->first();
+        // dd($product['code']);
+        if (!isset($product)) {
+            Alert::warning('Error', 'This product not exist in the warehouse');
+            return redirect(route('welcome.index'));
+        } else {
+            if (Session::has('cart')) {
+                $cart_Items = Session::get('cart');
+                $have_and_no_check = null;
+                for ($i = 0; $i < count($cart_Items); $i++) {
+                    if ($cart_Items[$i]['code'] == $product->code) {
+                        // echo $product->amount;
+                        // die;
+                        $have_and_no_check = $i;
+                        break;
+                    }
+                }
+                if ($have_and_no_check === null) {
+                    Session::push(
+                        'cart',
+                        [
+                            'fotdelete' => rand(1, 99),
+                            'product_id' => $product->id,
+                            'name' => $product->name,
+                            'amount' => 1,
+                            'price' => $product->price,
+                            'code' => $product->code
+                        ]
+                    );
+                    Alert::success('Successfully', 'This product put in the Cart');
+                    return redirect(route('welcome.index'));
+                } else {
+                    $check_is_cart = 0;
+                    for ($i = 0; $i < count($cart_Items); $i++) {
+                        if ($product->code == $cart_Items[$i]['code']) {
+                            $check_is_cart++;
+                        }
+                    }
+                    if ($check_is_cart == $product->amount) {
+                        Alert::warning('Error', 'This is not a product');
+                        return redirect(route('welcome.index'));
+                    } else {
+                        Session::push(
+                            'cart',
+                            [
+                                'fotdelete' => rand(1, 99),
+                                'product_id' => $product->id,
+                                'name' => $product->name,
+                                'amount' => 1,
+                                'price' => $product->price,
+                                'code' => $product->code
+                            ]
+                        );
+                        Alert::success('Successfully', 'This product put in the Cart');
+                        return redirect(route('welcome.index'));
+                    }
+                }
+                dd($cart_Items);
+            } else {
+                if ($product->amount == null) {
+                    Alert::warning('Error', 'This is not a product');
+                    return redirect(route('welcome.index'));
+                } else {
+                    Session::push(
+                        'cart',
+                        [
+                            'fotdelete' => rand(1, 99),
+                            'product_id' => $product->id,
+                            'name' => $product->name,
+                            'amount' => 1,
+                            'price' => $product->price,
+                            'code' => $product->code
+                        ]
+                    );
+                    Alert::success('Successfully', 'This product put in the Cart');
+                    return redirect(route('welcome.index'));
+                }
+            }
+        }
+    }
+
+    class="bi bi-dash-square"
+
+
+
+
+
+
+            // $product = Product::where('code', $request->get('product'))->first();
+        // dd($product['code']);
+        // if (!isset($product)) {
+        //     Alert::warning('Error', 'This product not exist in the warehouse');
+        //     return redirect(route('welcome.index'));
+        // } else {
+        //     if (Session::has('cart')) {
+        //         $cart_Items = Session::get('cart');
+        //         $have_and_no_check = null;
+        //         for ($i = 0; $i < count($cart_Items); $i++) {
+        //             if ($cart_Items[$i]['code'] == $product->code) {
+        //                 // echo $product->amount;
+        //                 // die;
+        //                 $have_and_no_check = $i;
+        //                 break;
+        //             }
+        //         }
+        //         if ($have_and_no_check === null) {
+        //             if ($product->amount == 0) {
+        //                 Alert::warning('Error', 'This is not a product');
+        //                 return redirect(route('welcome.index'));
+        //             } else {
+        //                 Session::push(
+        //                     'cart',
+        //                     [
+        //                         'product_id' => $product->id,
+        //                         'name' => $product->name,
+        //                         'amount' => 1,
+        //                         'price' => $product->price,
+        //                         'code' => $product->code
+        //                     ]
+        //                 );
+        //                 Alert::success('Successfully', 'This product put in the Cart');
+        //                 return redirect(route('welcome.index'));
+        //             }
+        //         } else {
+
+        //             if ($cart_Items[$i]['amount'] == $product->amount) {
+        //                 Alert::warning('Error', 'This is not a product');
+        //                 return redirect(route('welcome.index'));
+        //             } else {
+        //                 $count = $cart_Items[$i]['amount'] += 1;
+        //                 $sum = $cart_Items[$i]['price'] + $product->price;
+        //                 // dd($sum);
+        //                 $cart_Items[$i]['price'] = $sum;
+        //                 Session::put('cart', $cart_Items);
+        //                 Alert::success('Successfully', 'This product put in the Cart');
+        //                 return redirect(route('welcome.index'));
+        //             }
+        //         }
+        //         dd($cart_Items);
+        //     } else {
+        //         if ($product->amount == 0) {
+        //             Alert::warning('Error', 'This is not a product');
+        //             return redirect(route('welcome.index'));
+        //         } else {
+        //             Session::push(
+        //                 'cart',
+        //                 [
+        //                     'product_id' => $product->id,
+        //                     'name' => $product->name,
+        //                     'amount' => 1,
+        //                     'price' => $product->price,
+        //                     'code' => $product->code
+        //                 ]
+        //             );
+        //             Alert::success('Successfully', 'This new product put in the Cart');
+        //             return redirect(route('welcome.index'));
+        //         }
+        //     }
+        // }
